@@ -1,0 +1,49 @@
+def GetUrevRate(place_id):
+    params = {
+      "engine": "google_maps_reviews",
+      "place_id": place_id,
+      "api_key": "d8b0a9fe96b31d965e5ca7c08fe1107e7bae6fdb84b91da9ffcc60cd2b9af08e",
+      "sort_by": "ratingLow",
+      #"num": "20"
+    }
+    print(place_id)
+    search = GoogleSearch(params)
+    print(search.get_dict())
+    tr_data=[]
+    while True:
+
+        new_reviews_page_result = search.get_dict()
+        
+        tr_data.extend(new_reviews_page_result['reviews'])
+        #print(tr_data)
+        if tr_data[len(tr_data)-1]['rating']>3:
+            break
+        t_f1=False
+        t_f2=False
+        try:
+            t_f1=new_reviews_page_result.get('serpapi_pagination').get('next')
+        except:
+            pass
+        try:
+            t_f2=new_reviews_page_result.get('serpapi_pagination').get('next_page_token')
+        except:
+            pass
+        if t_f1 and t_f2:
+        #if new_reviews_page_result.get('serpapi_pagination').get('next') and new_reviews_page_result.get('serpapi_pagination').get('next_page_token'):
+            search.params_dict.update(dict(parse_qsl(urlsplit(new_reviews_page_result.get('serpapi_pagination', {}).get('next')).query)))
+        else:
+            break
+    for i in range(len(tr_data)):
+        try:
+            print("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+            print(i)
+            print(tr_data[i]['date'])
+            print(tr_data[i]['user']['name'])
+            print(tr_data[i]['user']['link'])
+            print(tr_data[i]['rating'])
+            print(tr_data[i]['snippet'])
+        except:
+            pass
+GetUrevRate("ChIJxW9LTDdxA2ARxWLoToV5L-M")
+time.sleep(5)
+GetUrevRate("ChIJJ8Pr19ObQTURBnbv2VVlR-g")
